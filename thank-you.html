@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>You're in | Fluentwork</title>
+<link rel="stylesheet" href="styles.css">
+<script src="config.js"></script>
+<script src="tracking.js"></script>
+</head>
+<body>
+<header><div class="wrap"><span class="brand">Fluent<span>work</span></span></div></header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Request received</p>
+    <h1 id="title">Thank you. Your assessment is on its way.</h1>
+    <p class="lead">The fastest way to get started is to message us on WhatsApp now.</p>
+
+    <p style="margin-top:28px"><a class="btn" id="wa" href="#">Start my assessment on WhatsApp</a></p>
+    <p class="micro" id="wa-note" hidden>WhatsApp number not configured yet (set it in config.js).</p>
+
+    <h2 style="margin-top:48px">What happens next</h2>
+    <div class="steps">
+      <div class="step"><div><h3>Within 1 minute</h3><p>You get a WhatsApp confirmation.</p></div></div>
+      <div class="step"><div><h3>Within 5 minutes</h3><p>A counsellor calls you during business hours.</p></div></div>
+      <div class="step"><div><h3>On the call</h3><p>We diagnose your speaking gap and map it to a plan.</p></div></div>
+    </div>
+
+    <p style="margin-top:28px" id="book-wrap" hidden><a class="btn" id="book" href="#" style="background:#fff;color:var(--accent);border:2px solid var(--accent)">Prefer to book a 15-minute call?</a></p>
+
+    <div class="placeholder" style="margin-top:40px">[Testimonial placeholder] Add one short real testimonial or transformation clip here.</div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var cfg = window.SITE_CONFIG || {};
+  var lead = {};
+  try { lead = JSON.parse(sessionStorage.getItem("fw_lead") || "{}"); } catch (_) {}
+  if (lead.name) document.getElementById("title").textContent = "Thank you, " + lead.name.split(" ")[0] + ". Your assessment is on its way.";
+
+  track("PageView");
+  var msg = encodeURIComponent("Hi, I just requested my communication assessment" + (lead.goal ? " (goal: " + lead.goal + ")" : "") + ".");
+  var wa = document.getElementById("wa");
+  if (cfg.whatsappNumber) {
+    wa.href = "https://wa.me/" + cfg.whatsappNumber + "?text=" + msg;
+    wa.addEventListener("click", function () { track("Contact", { content_name: "whatsapp" }); });
+  } else {
+    wa.removeAttribute("href"); document.getElementById("wa-note").hidden = false;
+  }
+  if (cfg.bookingUrl) {
+    var b = document.getElementById("book"); b.href = cfg.bookingUrl;
+    document.getElementById("book-wrap").hidden = false;
+    b.addEventListener("click", function () { track("Schedule"); });
+  }
+})();
+</script>
+</body>
+</html>
